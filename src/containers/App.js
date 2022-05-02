@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CardList from "../components/CardList";
 
 import "./App.css";
@@ -6,27 +6,24 @@ import SearchBox from "../components/SearchBox";
 import Scroll from "../components/Scroll";
 import ErrorBoundry from "../components/ErrorBoundry";
 
-class App extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      robots: [],
-      searchfield: "",
-    };
-  }
+const  App =()=> {
+  const [robots, setRobots] = useState([])
+  const [ searchfield, setSearchfield] = useState('')
+  
 
-  componentDidMount() {
+  
+  useEffect(()=>{
     fetch("https://jsonplaceholder.typicode.com/users")
       .then((res) => res.json())
-      .then((users) => this.setState({ robots: users }));
-  }
+      .then((users) => setRobots(users) );
+  }, [])
 
-  onSearchChange = (event) => {
-    this.setState({ searchfield: event.target.value });
+  const onSearchChange = (event) => {
+    setSearchfield( event.target.value );
   };
 
-  render() {
-    const { robots, searchfield } = this.state;
+ 
+    
     const filteredRobots = robots.filter((robot) => {
       return robot.name
         .toLocaleLowerCase()
@@ -37,16 +34,15 @@ class App extends React.Component {
     ) : (
       <div className="tc">
         <h1 className="f1">RoboFriends</h1>
-        <SearchBox searchChange={this.onSearchChange} />
+        <SearchBox searchChange={onSearchChange} />
         <Scroll>
           <ErrorBoundry>
             <CardList robots={filteredRobots} />
           </ErrorBoundry>
-          
         </Scroll>
       </div>
     );
   }
-}
+
 
 export default App;
